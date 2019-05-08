@@ -20,14 +20,18 @@
 
     <% include ./partials/_header.ejs %>
 
-
     <ul>
         <h3>My URLS</h3>
-            <% for (const key in urls) { %>
-                <% const value = urls[key]; %>
-                <li><%= value %> - <%= key %></li>
-                <form method="POST" action="/urls/<%= key %>/delete">
-                    <input type="submit" value="DELETE">
+            <% for (const shortURL in urls) { %>
+                <% const longURL = urls[shortURL]; %>
+                <li><%= longURL %> - <%= shortURL %></a></li>
+                <a href="urls/<%= shortURL %>">
+                    <button>
+                        Edit
+                    </button>
+                </a>
+                <form method="POST" action="/urls/<%= shortURL %>/delete">
+                    <input type="submit" value="Delete">
                 </form>
             <% }  %>
 
