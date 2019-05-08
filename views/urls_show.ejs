@@ -7,19 +7,21 @@
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-  <title>TinyApp</title>
 </head>
+
+<h1>TinyApp</h1>
+
+<header>
+        <% include ./partials/_header.ejs %>
+</header>
+    
 <body style="font-size:20px; padding:50px;">
     <!-- Add EJS code here -->
     <ul>
         <h3>My URLS</h3>
 
             <li><%= longURL %> </li>
-
             <li><%= shortURL %> </li>
-
-
-        Click <a href="#">here</a> to create a new short URL.
    
     </ul> 
 
