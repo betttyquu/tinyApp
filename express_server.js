@@ -39,15 +39,25 @@ app.get("/urls/:shortURL", (req, res) => {
     res.render("urls_show", templateVars);
   });
 
-app.post("/urls", (req, res) => {
-console.log(req.body);  // Log the POST request body to the console
-res.send("Ok");         // Respond with 'Ok' (we will replace this)
-});
+// app.post("/urls", (req, res) => {
+// console.log(req.body);  // Log the POST request body to the console
+// res.send("Ok");         // Respond with 'Ok' (we will replace this)
+// });
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+app.post("/urls", (req, res) => {
+    const shortURL = generateRandomString(6);
+    urlDatabase[shortURL] = req.body.longURL;
+    res.redirect(`/urls/${shortURL}`);
+});
+
+app.get("/u/:shortURL" , (req, res) => {
+    const longURL = urlDatabase[req.params.shortURL]
+    res.redirect(longURL);
+});
 
 function generateRandomString(length) {
     let result           = '';
@@ -59,5 +69,4 @@ function generateRandomString(length) {
      return result;
 }
 
-console.log(generateRandomString(6));
 
