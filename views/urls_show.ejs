@@ -21,10 +21,13 @@
 
     <ul>
         <h3>My URLS</h3>
-
+		<form method="POST" action="/urls/<%= shortURL %>/delete">
+			<input type="submit" value="DELETE">
+		</form>
             <li><%= longURL %> </li>
             <li><%= shortURL %> </li>
-   
+
+        
     </ul> 
 
 </body>

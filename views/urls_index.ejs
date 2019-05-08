@@ -16,21 +16,21 @@
 </header>
 
 
-    
-
 <body style="font-size:20px; padding:50px;">
-    <!-- Add EJS code here -->
+
     <% include ./partials/_header.ejs %>
-    
+
+
     <ul>
         <h3>My URLS</h3>
-        <% for (const key in urls) { %>
-            <% const value = urls[key]; %>
-            <li><%= value %> - <%= key %></li>
-        <% }  %>
-        
-       
-   
+            <% for (const key in urls) { %>
+                <% const value = urls[key]; %>
+                <li><%= value %> - <%= key %></li>
+                <form method="POST" action="/urls/<%= key %>/delete">
+                    <input type="submit" value="DELETE">
+                </form>
+            <% }  %>
+
     </ul> 
 
 </body>
