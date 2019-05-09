@@ -22,6 +22,8 @@
 
     <ul>
         <h3>My URLS</h3>
+
+
             <% for (const shortURL in urls) { %>
                 <% const longURL = urls[shortURL]; %>
                 <li><%= longURL %> - <%= shortURL %></a></li>
@@ -33,6 +35,7 @@
                 <form method="POST" action="/urls/<%= shortURL %>/delete">
                     <input type="submit" value="Delete">
                 </form>
+                
             <% }  %>
 
     </ul> 

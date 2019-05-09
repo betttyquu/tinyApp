@@ -1,9 +1,10 @@
 var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
+var cookieParser = require('cookie-parser')
 
-
-app.set("view engine", "ejs") 
+app.use(cookieParser());
+app.set("view engine", "ejs");
 
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -21,22 +22,29 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new");
+});
+
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { 
+    username: req.cookies.username,
+    urls: urlDatabase 
+  };
   res.render("urls_index", templateVars);
 });
 
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
-});
 
   
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  let templateVars = { 
+    username: req.cookies.username,
+    shortURL: req.params.shortURL,
+     longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
 
@@ -63,24 +71,38 @@ app.post("/urls/:shortURL/delete", (req, res) => {   //deleting a submission
   res.redirect("/urls")
 })
 
-app.post("/urls/:shortURL", (req, res) => {  //editing an existing submission
-  const longURL = req.body.longURL;
-  const shortURL = req.params.shortURL;
-  console.log(shortURL, longURL)
-  urlDatabase[shortURL] = longURL;
-
+app.post("/login", (req, res) =>{
+  const username = req.body.username;
+  res.cookie("username", username);
+  // console.log('login');
+  // // console.log(username);
   res.redirect("/urls");
+})
+
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("username");
+  res.redirect("/urls")
 });
 
 
+app.post("/urls/:shortURL", (req, res) => {  //editing an existing submission
+  const longURL = req.body.longURL;
+  const shortURL = req.params.shortURL;
+  // console.log('urls')
+  urlDatabase[shortURL] = longURL;
+  res.redirect("/urls");
+});
+
+ 
 function generateRandomString(length) {
-    let result           = '';
-    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let charactersLength = characters.length;
-    for ( let i = 0; i < length; i++ ) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-     }
-     return result;
+  let result           = '';
+  let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let charactersLength = characters.length;
+  for ( let i = 0; i < length; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+  return result;
 }
 
 

@@ -6,6 +6,26 @@
         <div class="navbar-header">
     
             <ul class="nav navbar-nav">
+
+
+                <%if (username) { %>
+                <%= (`Longged in as:  ${username}`); %>
+                <form class="form-inline" action="/logout" method="POST">
+                    <div class="form-group mb-2">
+                        <button type="submit" class="btn btn-primary">Logout</button>
+                    </div>
+                </form>
+        
+                <% }  else { %>
+                <form class="form-inline" action="/login" method="POST">
+                    <div class="form-group mb-2">
+                        <label for="username">Username: </label>
+                        <input class="form-control" type="text" name="username" style="width: 300px; margin: 1em">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+                
+                <% } %>
                 
                 <li> <a href="/urls/new">Click New TinyURL</a></li>
             
