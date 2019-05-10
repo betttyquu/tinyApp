@@ -22,7 +22,9 @@
 
 
             <% for (const shortURL in urls) { %>
-                <% const longURL = urls[shortURL]; %>
+                <% if(user && urls[shortURL].userID === user.id){ %>
+                    
+                <% const longURL = urls[shortURL].longURL %>
                 <li><%= longURL %> - <%= shortURL %></a></li>
                 <a href="/urls/<%= shortURL %>">
                     <button>
@@ -32,7 +34,7 @@
                 <form method="POST" action="/urls/<%= shortURL %>/delete">
                     <input type="submit" value="Delete">
                 </form>
-                
+                <% } %>
             <% }  %>
 
     </ul> 
