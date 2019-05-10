@@ -5,6 +5,10 @@ var cookieParser = require('cookie-parser')
 
 app.use(cookieParser());
 app.set("view engine", "ejs");
+const bcrypt = require('bcrypt');
+// const password = "purple-monkey-dinosaur"; // found in the req.params object
+// const hashedPassword = bcrypt.hashSync(password, 10);
+
 
 // var urlDatabase = {
 //   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -20,15 +24,15 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: bcrypt.hashSync("purple-monkey-dinosaur", 10)
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: bcrypt.hashSync("dishwasher-funk", 10)
   }
 }
-
+// 
 function checkEmail (email) {
   for (user of Object.values(users)) {
     if (user.email === email) {
@@ -127,6 +131,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {   //deleting a submission
 app.post("/login", (req, res) =>{
   const email = req.body.email;
   const password = req.body.password;
+
   if (email === "" || password === "") { 
     res.status(403);
     res.send("Email or password cannot be blank");
@@ -137,7 +142,7 @@ app.post("/login", (req, res) =>{
       user = users[key];
       }
     }
-    if (password !== user.password) {
+    if (bcrypt.compareSync(password, user.password)) {
       res.status(403);
       res.send("Email and password cannot be located")
     } 
@@ -147,10 +152,7 @@ app.post("/login", (req, res) =>{
     }
 });
 app.get("/register", (req, res) => { //registeration page information from client
-  let templateVars = { 
-    Email: req.params.email,
-    Password: req.params.password };
-  res.render("urls_register", templateVars);
+    res.render("urls_register");
 });
  
 app.post("/register", (req, res) => {  //register for a new user and stored in users
@@ -163,7 +165,7 @@ app.post("/register", (req, res) => {  //register for a new user and stored in u
     users[user_id] = {};
     users[user_id]["id"] = user_id;
     users[user_id]["email"] = req.body.email;
-    users[user_id]["password"] = req.body.password;
+    users[user_id]["password"] = bcrypt.hashSync(req.body.password, 10)
     res.cookie("userID", user_id);   
     // console.log(users);
     res.redirect("/urls")
