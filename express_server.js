@@ -3,9 +3,19 @@ var app = express();
 var PORT = 8080; // default port 8080
 var cookieParser = require('cookie-parser')
 
-app.use(cookieParser());
+// app.use(cookieParser());
+var cookieSession = require('cookie-session')
+
 app.set("view engine", "ejs");
 const bcrypt = require('bcrypt');
+app.use(cookieSession({
+  name: 'session',
+  keys: ['abcdef'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
+
 // const password = "purple-monkey-dinosaur"; // found in the req.params object
 // const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -78,21 +88,38 @@ app.get("/urls", (req, res) => {
   // console.log(req.cookies);
   let templateVars = { 
     user: users[req.cookies["userID"]],
-    urls: urlDatabase 
+    urls: urlsForUser(req.cookies["userID"]) 
   };
   // console.log(templateVars);
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  if (urlDatabase[req.params.shortURL]){
-    let templateVars = { 
-      user: users[req.cookies["userID"]],
-      shortURL: req.params.shortURL,
-      longURL: urlDatabase[req.params.shortURL].longURL };
-    res.render("urls_show", templateVars);
+
+  if (!req.cookies["userID"]) {
+    //user is not logged in
+    res.send("Please log in");
   } else {
-    res.redirect("/urls");
+    // user is logged in
+    if (urlDatabase[req.params.shortURL]) {
+      //user is logged in, and url exist
+      if (req.cookies["userID"] === urlDatabase[req.params.shortURL].userID) {
+        // user is logged in with correct id
+        let templateVars = {
+          user: users[req.cookies["userID"]],
+          shortURL: req.params.shortURL,
+          longURL: urlDatabase[req.params.shortURL].longURL
+        };
+        res.render("urls_show", templateVars);
+      } else {
+        // user is logged in with diff id
+        res.send("Not authorized user")
+      }
+    } else {
+      //user is logged in, but url is not exist
+      res.redirect("/urls");
+    }
+
   }
 
 });
@@ -102,7 +129,7 @@ app.listen(PORT, () => {
 });
 
 app.post("/urls", (req, res) => {
-  //only allow adding new url if user is logged in
+  //only allow adding new obj if user is logged in
   let user = req.cookies["userID"];
   const shortURL = generateRandomString(6);
   const newURL = {
@@ -142,7 +169,7 @@ app.post("/login", (req, res) =>{
       user = users[key];
       }
     }
-    if (bcrypt.compareSync(password, user.password)) {
+    if (!bcrypt.compareSync(password, user.password)) {
       res.status(403);
       res.send("Email and password cannot be located")
     } 
@@ -215,3 +242,14 @@ function generateRandomString(length) {
   return result;
 }
 
+function urlsForUser(id) {
+  const obj = {};
+  for(key in urlDatabase) {
+    if(id === urlDatabase[key].userID){
+      obj[key] = urlDatabase[key]
+    }
+
+  }
+
+  return obj;
+}
