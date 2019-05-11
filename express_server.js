@@ -10,7 +10,7 @@ app.set("view engine", "ejs");
 const bcrypt = require('bcrypt');
 app.use(cookieSession({
   name: 'session',
-  keys: ['abcdef'],
+  keys: ['abcefg'],
 
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
@@ -64,10 +64,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  if(req.cookies){
-    if((req.cookies["userID"])){
+  if(req.session){
+    if((req.session["userID"])){
       let templateVars = { 
-        user: users[req.cookies["userID"]],
+        user: users[req.session["userID"]],
         urls: urlDatabase 
       };
       res.render("urls_new", templateVars);
@@ -85,10 +85,10 @@ app.get("/urls/new", (req, res) => {
 // });
 
 app.get("/urls", (req, res) => {
-  // console.log(req.cookies);
+  // console.log(req.session);
   let templateVars = { 
-    user: users[req.cookies["userID"]],
-    urls: urlsForUser(req.cookies["userID"]) 
+    user: users[req.session["userID"]],
+    urls: urlsForUser(req.session["userID"]) 
   };
   // console.log(templateVars);
   res.render("urls_index", templateVars);
@@ -96,17 +96,17 @@ app.get("/urls", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
 
-  if (!req.cookies["userID"]) {
+  if (!req.session["userID"]) {
     //user is not logged in
     res.send("Please log in");
   } else {
     // user is logged in
     if (urlDatabase[req.params.shortURL]) {
       //user is logged in, and url exist
-      if (req.cookies["userID"] === urlDatabase[req.params.shortURL].userID) {
+      if (req.session["userID"] === urlDatabase[req.params.shortURL].userID) {
         // user is logged in with correct id
         let templateVars = {
-          user: users[req.cookies["userID"]],
+          user: users[req.session["userID"]],
           shortURL: req.params.shortURL,
           longURL: urlDatabase[req.params.shortURL].longURL
         };
@@ -130,11 +130,11 @@ app.listen(PORT, () => {
 
 app.post("/urls", (req, res) => {
   //only allow adding new obj if user is logged in
-  let user = req.cookies["userID"];
+  let user = req.session["userID"];
   const shortURL = generateRandomString(6);
   const newURL = {
     longURL: req.body.longURL,
-    userID: req.cookies["userID"]
+    userID: req.session["userID"]
   };
   urlDatabase[shortURL] = newURL;
   res.redirect(`/urls/${shortURL}`);
@@ -147,7 +147,7 @@ app.get("/u/:shortURL" , (req, res) => {
 
 app.post("/urls/:shortURL/delete", (req, res) => {   //deleting a submission
   const shortURL = req.params.shortURL;
-  if(urlDatabase[shortURL]  && urlDatabase[shortURL].userID === req.cookies["userID"]) {
+  if(urlDatabase[shortURL]  && urlDatabase[shortURL].userID === req.session["userID"]) {
     delete urlDatabase[shortURL];
     res.redirect("/urls");
   } else
@@ -212,10 +212,10 @@ app.post("/logout", (req, res) => {
 
 
 app.post("/urls/:shortURL", (req, res) => {    //editing an existing submission
-  if(req.cookies){
-    if((req.cookies["userID"]) && req.cookies["userID"] === urlDatabase[req.params.shortURL].userID){
+  if(req.session){
+    if((req.session["userID"]) && req.session["userID"] === urlDatabase[req.params.shortURL].userID){
       let templateVars = { 
-        user: users[req.cookies["userID"]],
+        user: users[req.session["userID"]],
         longURL: req.body.longURL,
         shortURL: req.params.shortURL
       };
