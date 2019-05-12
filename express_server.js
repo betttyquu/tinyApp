@@ -181,8 +181,7 @@ app.post("/login", function(req, res) {
     if (users[key].email === email && !bcrypt.compareSync(password, users[key].password)) {
         res.status(403);
         res.send('Password and email cannot be located')
-        return;
-    } else if (users[key].email === email && bcrypt.compareSync(password, users[key].password)) {
+    } else{
         req.session['userID'] = key;
         res.redirect('/urls');
         return;
