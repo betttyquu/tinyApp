@@ -12,6 +12,7 @@
 
 
 
+<div>
 
 <body style="font-size:20px; padding:50px;">
 
@@ -19,6 +20,7 @@
 
     <ul>
         <h3>My URLS</h3>
+        <a href='/urls/new'>Create New TinyURL</a>
 
 
             <% for (const shortURL in urls) { %>
@@ -27,9 +29,7 @@
                 <% const longURL = urls[shortURL].longURL %>
                 <li><%= longURL %> - <%= shortURL %></a></li>
                 <a href="/urls/<%= shortURL %>">
-                    <button>
-                        Edit
-                    </button>
+                    <button type="submit" class="btn btn-primary">Edit</button>
                 </a>
                 <form method="POST" action="/urls/<%= shortURL %>/delete">
                     <input type="submit" value="Delete">
@@ -40,4 +40,5 @@
     </ul> 
 
 </body>
+</div>
 </html>

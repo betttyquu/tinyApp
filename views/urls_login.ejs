@@ -19,10 +19,8 @@
         
 
     <ul>
-        <h1>TinyApp</h1>
-        <h3>Login</h3>
-        <a href="/login">Login</a> |
-        <a href="/register">Register</a>
+        <% include ./partials/_header.ejs %>
+
         <form class="form-inline" action="/login" method="POST">
             <div class="form-group mb-2">
                 <label for="email">Email: </label>

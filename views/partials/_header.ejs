@@ -1,29 +1,21 @@
 
 
 <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
     
             <div class="navbar-header">
-
                 <h1>TinyApp</h1>
-                    <% if (user){ %>
+
+                    <% if(user){ %>
                         Logged in as : <%= user.email %>
                         <form action="/logout" method="POST">
-                        <button>Logout</button>
-                        </form>
-                       
-                    <% } else { %> 
-
-
-                <a href="/login">Login</a> |
-                <a href="/register">Register</a>
-
-            
-                        <% } %>
+                            <button type="logout" class="btn btn-primary">Logout</button>
+                        </form> 
+                        
+                    <% } else { %>
+                        <a href="/login">Login</a> |
+                        <a href="/register">Register</a>
                 
-                </ul>
-    
+                    <% } %>
             </div>
         
-        </div>
      </nav>
